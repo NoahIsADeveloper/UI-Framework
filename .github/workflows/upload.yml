@@ -1,16 +1,12 @@
-name: Upload to Roblox
+name: Upload to Roblox (Dev)
 
 on:
-  workflow_dispatch:
-    inputs:
-      reason:
-        description: 'Why are you uploading?'
-        required: false
-        default: 'Manual trigger'
+  push:
+    branches:
+      - dev
 
 jobs:
   upload:
-    if: github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     environment: ROBLOX-SECURITY-TOKEN
 
@@ -25,8 +21,8 @@ jobs:
           chmod +x rojo
           sudo mv rojo /usr/local/bin/rojo
 
-      - name: Upload to Roblox
+      - name: Upload to Roblox (Dev Asset)
         env:
           ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
         run: |
-          rojo upload --asset-id 106147285685243 --cookie "$ROBLOSECURITY"
+          rojo upload --asset-id 72441735686914 --cookie "$ROBLOSECURITY"
