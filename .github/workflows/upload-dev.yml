@@ -28,4 +28,4 @@ jobs:
         env:
           ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
         run: |
-          rojo upload --asset-id 72441735686914 --cookie "$ROBLOSECURITY"
+          rojo upload --asset_id 72441735686914 --cookie "$ROBLOSECURITY"
