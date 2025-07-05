@@ -8,7 +8,7 @@ Connection.__index = Connection
 export type Connection = typeof(setmetatable({} :: {
 	_connected: boolean,
 	_signal: Signal,
-	_callback: Callback?,		-- // Type checker freaks out if this isn't nullable, even though it will never be nil.
+	_callback: Callback?,
 	_next: Connection?,
 	_last: Connection?
 }, Connection))
@@ -19,7 +19,6 @@ function Connection:Disconnect(): ()
 	self._connected = false
 	self._callback = nil
 
-	-- // Surgery the snake
 	self._last._next = self._next
 end
 
@@ -45,7 +44,6 @@ export type Signal = typeof(setmetatable({} :: {
 }, Signal))
 
 function Signal:DisconnectAll(): ()
-	-- // The garbage collector should do it's job
 	self._head = nil
 	self._tail = nil
 end
