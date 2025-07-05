@@ -14,14 +14,17 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install Rojo
+      - name: Install unzip (if not installed)
+        run: sudo apt-get update && sudo apt-get install -y unzip
+
+      - name: Download and install Rojo
         run: |
-          curl -sL https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-x86_64-unknown-linux-gnu.gz -o rojo.gz
-          gunzip rojo.gz
+          curl -sL -o rojo.zip https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-7.5.1-linux-x86_64.zip
+          unzip -q rojo.zip
           chmod +x rojo
           sudo mv rojo /usr/local/bin/rojo
 
-      - name: Upload to Roblox (Dev Asset)
+      - name: Upload to Roblox
         env:
           ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
         run: |
