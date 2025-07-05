@@ -1,0 +1,29 @@
+name: Upload to Roblox
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  upload:
+    if: github.event.pull_request == null || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    environment: ROBLOX_SECURITY_TOKEN
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Rojo
+        run: |
+          curl -sL https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-x86_64-unknown-linux-gnu.gz -o rojo.gz
+          gunzip rojo.gz
+          chmod +x rojo
+          sudo mv rojo /usr/local/bin/rojo
+
+      - name: Upload to Roblox
+        env:
+          ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
+        run: |
+          rojo upload --asset-id 97071649956642 --cookie "$ROBLOSECURITY"
