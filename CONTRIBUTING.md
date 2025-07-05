@@ -1,5 +1,4 @@
-# Contributing to [Your Roblox Game]
-
+# Contributing
 Thanks for your interest in contributing! To keep our codebase clean, consistent, and awesome, please follow these guidelines.
 
 ## Coding Style
