@@ -25,7 +25,8 @@ jobs:
           sudo mv rojo /usr/local/bin/rojo
 
       - name: Rename Package
-        run: sed -i "s/\"name\": \"Slate\"/\"name\": \"Slate-dev\"/" default.project.json
+        run: |
+          sed -i 's/"name": "Slate"/"name": "Slate-dev"/' default.project.json
 
       - name: Upload to Roblox
         env:
