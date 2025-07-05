@@ -1,0 +1,7 @@
+# Rojo
+sourcemap.json
+/*.rbxl
+/*.rbxl.lock
+
+# Visual Studio Code
+/.vscode/
