@@ -2,8 +2,11 @@ name: Upload to Roblox
 
 on:
   workflow_dispatch:
-    branches:
-      - main
+    inputs:
+      reason:
+        description: 'Why are you uploading?'
+        required: false
+        default: 'Manual trigger'
 
 jobs:
   upload:
