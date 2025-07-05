@@ -1,0 +1,31 @@
+name: Upload to Roblox
+
+on:
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Why are you uploading?'
+        required: false
+        default: 'Manual trigger'
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    environment: ROBLOX-SECURITY-TOKEN
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Rojo
+        run: |
+          curl -sL https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-x86_64-unknown-linux-gnu.gz -o rojo.gz
+          gunzip rojo.gz
+          chmod +x rojo
+          sudo mv rojo /usr/local/bin/rojo
+
+      - name: Upload to Roblox
+        env:
+          ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
+        run: |
+          rojo upload --asset-id 106147285685243 --cookie "$ROBLOSECURITY"
