@@ -14,8 +14,21 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Cache unzip .deb
+        id: unzip-cache
+        uses: actions/cache@v3
+        with:
+          path: ./unzip.deb
+          key: unzip-ubuntu-deb
+
+      - name: Download unzip .deb
+        if: steps.unzip-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -o unzip.deb http://archive.ubuntu.com/ubuntu/pool/main/u/unzip/unzip_6.0-26ubuntu1_amd64.deb
+
       - name: Install unzip
-        run: sudo apt-get update && sudo apt-get install -y unzip
+        run: |
+          sudo dpkg -i unzip.deb || sudo apt-get install -f -y
 
       - name: Cache Rojo
         id: rojo-cache
