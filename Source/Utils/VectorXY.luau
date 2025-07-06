@@ -29,6 +29,7 @@ export type VectorXY = typeof(setmetatable({} :: {
 	Rotate: (self: VectorXY, radians: number) -> (VectorXY),
 	Angle: (self: VectorXY) -> (number),
 
+	fromVector2: (vector2: Vector2) -> (VectorXY),
 	new: (x: number, y: number) -> (VectorXY),
 }, VectorXY))
 
@@ -160,6 +161,17 @@ function VectorXY:Rotate(radians: number): (VectorXY)
 		self.x * cos - self.y * sin,
 		self.x * sin + self.y * cos
 	)
+end
+
+function VectorXY.fromVector2(vector2: Vector2): (VectorXY)
+	assert(typeof(vector2) == "Vector2", `argument 1 of VectorXY.fromVector2() expected number got {type(vector2)}`)
+
+	local object = setmetatable({
+		x = vector2.X or 0,
+		y = vector2.Y or 0,
+	}, VectorXY) :: VectorXY
+
+	return object
 end
 
 function VectorXY.new(x: number?, y: number?): (VectorXY)
