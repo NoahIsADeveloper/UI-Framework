@@ -1,6 +1,8 @@
 --!optimize 2
 --!strict
 
+--haha
+
 local Element = {}
 
 function Element.new()
