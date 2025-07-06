@@ -17,10 +17,34 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Install Rojo
+      - name: Cache unzip .deb
+        id: unzip-cache
+        uses: actions/cache@v3
+        with:
+          path: ./unzip.deb
+          key: unzip-ubuntu-deb
+
+      - name: Download unzip .deb
+        if: steps.unzip-cache.outputs.cache-hit != 'true'
         run: |
-          curl -sL https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-x86_64-unknown-linux-gnu.gz -o rojo.gz
-          gunzip rojo.gz
+          curl -o unzip.deb http://archive.ubuntu.com/ubuntu/pool/main/u/unzip/unzip_6.0-26ubuntu1_amd64.deb
+
+      - name: Install unzip
+        run: |
+          sudo dpkg -i unzip.deb || sudo apt-get install -f -y
+
+      - name: Cache Rojo
+        id: rojo-cache
+        uses: actions/cache@v3
+        with:
+          path: /usr/local/bin/rojo
+          key: rojo-linux-x86_64-7.5.1
+
+      - name: Download and install Rojo
+        if: steps.rojo-cache.outputs.cache-hit != 'true'
+        run: |
+          curl -sL -o rojo.zip https://github.com/rojo-rbx/rojo/releases/latest/download/rojo-7.5.1-linux-x86_64.zip
+          unzip -q rojo.zip
           chmod +x rojo
           sudo mv rojo /usr/local/bin/rojo
 
@@ -28,4 +52,4 @@ jobs:
         env:
           ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
         run: |
-          rojo upload --asset-id 106147285685243 --cookie "$ROBLOSECURITY"
+          rojo upload --asset_id 106147285685243 --cookie "$ROBLOSECURITY"
