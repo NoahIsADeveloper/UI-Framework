@@ -1,12 +1,15 @@
 --!optimize 2
 --!strict
 
---haha
-
 local Element = {}
+Element.__index = Element
+export type Element = typeof(setmetatable({} :: {
+	new: (parent: Element) -> (Element),
+}, Element))
 
-function Element.new()
+function Element.new(parent: Element)
 	local object = setmetatable({
+		_parent = parent,
 		_children = {}
 	}, Element)
 
