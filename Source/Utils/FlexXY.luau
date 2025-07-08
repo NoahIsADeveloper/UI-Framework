@@ -45,6 +45,7 @@ function FlexXY.new(scaleX: number?, offsetX: number?, scaleY: number?, offsetY:
 		scale = VectorXY.new(scaleX or 0, scaleY or 0),
 		offset = VectorXY.new(offsetX or 0, offsetY or 0),
 	}, FlexXY) :: any
+
 	return object
 end
 
