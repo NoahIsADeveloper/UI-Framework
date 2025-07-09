@@ -4,6 +4,9 @@
 local Element = {}
 Element.__index = Element
 export type Element = typeof(setmetatable({} :: {
+	_parent: Element,
+	_children: {Element},
+
 	new: (parent: Element) -> (Element),
 }, Element))
 
