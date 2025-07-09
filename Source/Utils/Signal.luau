@@ -93,12 +93,10 @@ function Signal:Wait(): (...any)
 end
 
 function Signal:Once(callback: Callback): (Connection)
-	local connection = self:Connect(function(connection: Connection, ...: any)
+	return self:Connect(function(connection: Connection, ...: any)
 		connection:Disconnect()
 		callback(connection, ...)
 	end)
-
-	return connection
 end
 
 function Signal:Fire(...: any): ()
