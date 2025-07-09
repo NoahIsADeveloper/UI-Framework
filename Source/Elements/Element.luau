@@ -28,6 +28,8 @@ export type Element = typeof(setmetatable({} :: {
 	SizeChanged: Signal.Signal,
 	ParentChanged: Signal.Signal,
 
+	ChildAdded: Signal.Signal,
+
 	-- // Methods
 	DefineProperties: (self: Element) -> (),
 	DefineSignals: (self: Element) -> (),
@@ -46,6 +48,7 @@ function Element:DefineSignals()
 	self.ParentChanged = Signal.new()
 	self.SizeChanged = Signal.new()
 	self.PositionChanged = Signal.new()
+	self.ChildAdded = Signal.new()
 end
 
 function Element:DefineProperties()
@@ -76,6 +79,12 @@ function Element:Reparent(parent: Element?): (boolean)
 	end
 
 	self.parent = parent
+
+	if parent then
+		table.insert(parent.children, self)
+		parent.ChildAdded:Fire(self)
+	end
+
 	self.ParentChanged:Fire(parent, oldParent)
 
 	return true
