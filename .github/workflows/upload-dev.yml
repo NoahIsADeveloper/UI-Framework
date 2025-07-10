@@ -72,7 +72,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.event.after }}
         run: |
-          COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' $BEFORE..$AFTER | jq -R . | jq -s .)
+          COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - ${{ github.actor }}' $BEFORE..$AFTER | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
 
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
