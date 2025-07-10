@@ -72,8 +72,14 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.event.after }}
         run: |
-          COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - ${{ github.actor }}' $BEFORE..$AFTER | jq -R . | jq -s .)
-          DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
+          COMMITS=$(git log $BEFORE..$AFTER --pretty=format:'%h|%H|%s|%an' | while IFS='|' read -r short full msg author; do
+            if [ ${#msg} -gt 50 ]; then
+              msg="${msg:0:47}..."
+            fi
+            echo "[\`$short\`](https://github.com/NoahIsADeveloper/Slate/commit/$full) $msg - $author"
+          done | jq -R . | jq -s .)
+
+          DESCRIPTION=$(echo "$COMMITS" | jq -r 'join("\n")')
 
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
             "content": null,
