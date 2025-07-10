@@ -72,7 +72,7 @@ jobs:
             "embeds": [
               {
                 "title": "Slate-dev Package Update",
-                "description": $desc,
+                "description": "test",
                 "url": "https://github.com/NoahIsADeveloper/Slate",
                 "color": 1274803
               }
