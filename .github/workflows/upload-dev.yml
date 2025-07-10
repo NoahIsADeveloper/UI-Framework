@@ -56,10 +56,10 @@ jobs:
           rojo upload --asset_id 72441735686914 --cookie "$ROBLOSECURITY"
 
   notify:
-    - needs: upload
-    - runs-on: ubuntu-latest
-    - environment: DISCORD-WEBHOOK-URL
-    - steps:
+    needs: upload
+    runs-on: ubuntu-latest
+    environment: DISCORD-WEBHOOK-URL
+    steps:
       - name: Send webhook notification with latest commits
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
