@@ -58,6 +58,7 @@ function Element:DefineProperties()
 end
 
 function Element:Resize(size: FlexXY.FlexXY): (boolean)
+	--note! would also need to resize children
 	local oldSize = self.size
 
 	self.size = size
@@ -70,6 +71,7 @@ function Element:Reparent(parent: Element?): (boolean)
 	local oldParent = self.parent
 	if oldParent == parent then return false end
 	if parent ~= nil and not isElement(parent) then return false end
+	--note! would also need to resize children
 
 	if oldParent then
 		local index = table.find(oldParent.children, self)
