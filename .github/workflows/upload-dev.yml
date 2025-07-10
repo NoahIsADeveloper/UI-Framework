@@ -81,7 +81,7 @@ jobs:
               {
                 "title": "Slate-dev Package Update",
                 "description": $desc,
-                "url": "https://github.com/NoahIsADeveloper/Slate",
+                "url": "https://github.com/NoahIsADeveloper/Slate/tree/dev",
                 "color": 1274803
               }
             ],
