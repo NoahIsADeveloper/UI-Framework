@@ -67,7 +67,7 @@ jobs:
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
         run: |
-          COMMITS=$(git log -5 --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' | jq -R . | jq -s .)
+          COMMITS=$(git log "${{ github.event.before }}..${{ github.sha }}" --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
 
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
