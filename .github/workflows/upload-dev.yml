@@ -66,11 +66,14 @@ jobs:
       - name: Fetch full git history
         run: git fetch --unshallow
 
-      - name: Send webhook notification with latest commits
+      - name: Fire webhook
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.event.after }}
         run: |
-          COMMITS=$(git log -5 --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' | jq -R . | jq -s .)
+          # Get the commits in the push range
+          COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' $BEFORE..$AFTER | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
 
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
@@ -86,4 +89,4 @@ jobs:
             "attachments": []
           }')
 
-          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.WEBHOOK_URL }}"
+          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "$WEBHOOK_URL"
