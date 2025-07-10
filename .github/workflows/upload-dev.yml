@@ -60,6 +60,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: DISCORD-WEBHOOK-URL
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
       - name: Send webhook notification with latest commits
         env:
           WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
@@ -72,7 +75,7 @@ jobs:
             "embeds": [
               {
                 "title": "Slate-dev Package Update",
-                "description": "test",
+                "description": $desc,
                 "url": "https://github.com/NoahIsADeveloper/Slate",
                 "color": 1274803
               }
