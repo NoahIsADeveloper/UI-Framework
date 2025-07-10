@@ -74,7 +74,6 @@ jobs:
         run: |
           COMMITS=$(git log ... --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %<(50,trunc)%s - %an' | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
-
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
             "content": null,
             "embeds": [
