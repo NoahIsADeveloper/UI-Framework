@@ -72,7 +72,6 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.event.after }}
         run: |
-          # Get the commits in the push range
           COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - %an' $BEFORE..$AFTER | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
 
