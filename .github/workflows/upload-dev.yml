@@ -54,3 +54,30 @@ jobs:
           ROBLOSECURITY: ${{ secrets.ROBLOX_SECURITY }}
         run: |
           rojo upload --asset_id 72441735686914 --cookie "$ROBLOSECURITY"
+
+  notify:
+    - needs: upload
+    - runs-on: ubuntu-latest
+    - environment: DISCORD-WEBHOOK-URL
+    - steps:
+      - name: Send webhook notification with latest commits
+        env:
+          WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
+        run: |
+          COMMITS=$(git log -5 --pretty=format:'`%h` %s - %an' | jq -R . | jq -s .)
+          DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
+
+          PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
+            "content": null,
+            "embeds": [
+              {
+                "title": "Slate-dev Package Update",
+                "description": $desc,
+                "url": "https://github.com/NoahIsADeveloper/Slate",
+                "color": 1274803
+              }
+            ],
+            "attachments": []
+          }')
+
+          curl -X POST -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.WEBHOOK_URL }}"
