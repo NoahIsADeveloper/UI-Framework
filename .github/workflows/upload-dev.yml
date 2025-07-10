@@ -72,9 +72,7 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.event.after }}
         run: |
-          COMMITS=$(git log --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %s - ${{ github.actor }}' $BEFORE..$AFTER | \
-          awk -v max=50 '{msg=$0; sub(/.*\] /,"",msg); author=" - '${{ github.actor }}'"; msg=substr(msg,1,length(msg)-length(author)); if(length(msg)>max) msg=substr(msg,1,46)"..."; print substr($0,1,index($0,msg)-1) msg author;}' | jq -R . | jq -s .)
-
+          COMMITS=$(git log ... --pretty=format:'[`%h`](https://github.com/NoahIsADeveloper/Slate/commit/%H) %<(50,trunc)%s - %an' | jq -R . | jq -s .)
           DESCRIPTION=$(echo $COMMITS | jq -r 'join("\n")')
 
           PAYLOAD=$(jq -n --arg desc "$DESCRIPTION" '{
