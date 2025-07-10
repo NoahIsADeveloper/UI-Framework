@@ -10,7 +10,6 @@ export type Connection = typeof(setmetatable({} :: {
 
 	_callback: Callback?,
 	_connected: boolean,
-	_signal: Signal,
 	_next: Connection?,
 	_last: Connection?,
 
@@ -35,7 +34,6 @@ function Connection.new(signal: Signal, callback: Callback): (Connection)
 	local object = setmetatable({
 		_callback = callback,
 		_connected = true,
-		_signal = signal,
 		_next = nil,
 		_last = nil,
 	}, Connection) :: any
