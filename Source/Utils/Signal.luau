@@ -41,11 +41,12 @@ function Connection.new(callback: Callback): (Connection)
 	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {type(callback)}`) end
 
 	local object = (table.remove(ConnectionPool) or setmetatable({
-		_callback = callback,
-		_connected = true,
 		_next = nil,
 		_last = nil,
 	}, Connection)) :: any
+
+	object._callback = callback
+	object._connected = true
 
 	return object
 end
@@ -66,16 +67,19 @@ export type Signal = typeof(setmetatable({} :: {
 	FireSync: (self: Signal, ...any) -> (),
 	Fire: (self: Signal, ...any) -> (),
 
+	wrap: (RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
 }, Signal))
 
 function Signal:DisconnectAll(): ()
 	local connection = self._head
+
 	while connection do
 		local next = connection._next
 		connection:Disconnect()
 		connection = next
 	end
+
 	self._head = nil
 	self._tail = nil
 end
