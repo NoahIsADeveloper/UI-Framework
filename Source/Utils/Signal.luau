@@ -1,9 +1,16 @@
 --!optimize 2
 --!strict
 
+-- Written by @NoahIsADeveloper
+-- Listeners are called in the order they are connected in (FIFO)
+
+-- // Constants
+local CONNECTION_POOL_MAX_SIZE = 64
+
+-- // Connections
 export type Callback = (self: Connection, ...any) -> ()
 
-local ConnectionPool = table.create(64) :: {Connection}
+local ConnectionPool = table.create(CONNECTION_POOL_MAX_SIZE) :: {Connection}
 local Connection = {} :: Connection
 Connection.__index = Connection
 export type Connection = typeof(setmetatable({} :: {
@@ -14,10 +21,15 @@ export type Connection = typeof(setmetatable({} :: {
 	_next: Connection?,
 	_last: Connection?,
 
+	IsConnected: (self: Connection) -> (boolean),
 	Disconnect: (self: Connection) -> (),
 
 	new: (callback: Callback) -> (Connection),
 }, Connection))
+
+function Connection:IsConnected(): (boolean)
+	return self._connected
+end
 
 function Connection:Disconnect(): ()
 	if not self._connected then error("cannot disconnect Connection that is not connected") end
@@ -32,7 +44,7 @@ function Connection:Disconnect(): ()
 	self._callback = nil
 	self._next = nil
 
-	if #ConnectionPool < 64 then
+	if #ConnectionPool < CONNECTION_POOL_MAX_SIZE then
 		table.insert(ConnectionPool, self)
 	end
 end
@@ -51,6 +63,7 @@ function Connection.new(callback: Callback): (Connection)
 	return object
 end
 
+-- // Signals
 local Signal = {} :: Signal
 Signal.__index = Signal
 export type Signal = typeof(setmetatable({} :: {
@@ -153,10 +166,7 @@ end
 function Signal.from(signal: RBXScriptSignal): (Signal, RBXScriptConnection)
 	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of .from(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
 
-	local object = setmetatable({
-		_head = nil,
-		_tail = nil,
-	}, Signal) :: any
+	local object = Signal.new()
 
 	local connection = signal:Connect(function(...)
 		object:Fire(...)
