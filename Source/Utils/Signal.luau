@@ -3,6 +3,7 @@
 
 -- Written by @NoahIsADeveloper
 -- Listeners are called in the order they are connected in (FIFO)
+-- Arguments are not cloned
 
 -- // Constants
 local CONNECTION_POOL_MAX_SIZE = 64
@@ -76,8 +77,6 @@ export type Signal = typeof(setmetatable({} :: {
 	Once: (self: Signal, callback: Callback) -> (Connection),
 	DisconnectAll: (self: Signal) -> (),
 	Wait: (self: Signal, timeout: number) -> (...any),
-	FireAsync: (self: Signal, ...any) -> (),
-	FireSync: (self: Signal, ...any) -> (),
 	Fire: (self: Signal, ...any) -> (),
 	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 	GetConnections: (self: Signal) -> ({Connection}),
@@ -156,28 +155,17 @@ function Signal:Once(callback: Callback): (Connection)
 	end)
 end
 
-function Signal:FireSync(...: any): ()
+function Signal:Fire(...: any): ()
 	local connection = self._head
 	while connection do
 		local callback = connection._callback
 		local next = connection._next
 
 		if connection._connected and callback then
-			callback(connection, ...)
-		end
-
-		connection = next
-	end
-end
-
-function Signal:FireAsync(...: any): ()
-	local connection = self._head
-	while connection do
-		local callback = connection._callback
-		local next = connection._next
-
-		if connection._connected and callback then
-			task.spawn(callback, connection, ...)
+			local success, errorMessage = pcall(task.spawn, callback, connection, ...)
+			if not success then
+				warn(`{debug.traceback(errorMessage)}`)
+			end
 		end
 
 		connection = next
@@ -214,5 +202,4 @@ function Signal.new(): (Signal)
 	return object
 end
 
-Signal.Fire = Signal.FireAsync
 return Signal
