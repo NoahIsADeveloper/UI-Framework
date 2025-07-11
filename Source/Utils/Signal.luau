@@ -70,16 +70,20 @@ export type Signal = typeof(setmetatable({} :: {
 	_head: Connection?,
 	_tail: Connection?,
 
-	Connect: (self: Signal, callback: Callback) -> (Connection),
-	Once: (self: Signal, callback: Callback) -> (Connection),
-	Disconnect: (self: Signal, callback: Callback, disconnectAll: boolean?) -> (),
-	DisconnectAll: (self: Signal) -> (),
-	Wait: (self: Signal, timeout: number) -> (...any),
-	Fire: (self: Signal, ...any) -> (),
-	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 	GetConnections: (self: Signal) -> ({Connection}),
 	HasConnections: (self: Signal) -> (boolean, number),
 	GetConnectionCount: (self: Signal) -> (number),
+
+	Connect: (self: Signal, callback: Callback) -> (Connection),
+	Once: (self: Signal, callback: Callback) -> (Connection),
+	Wait: (self: Signal, timeout: number) -> (...any),
+
+	Disconnect: (self: Signal, callback: Callback, disconnectAll: boolean?) -> (),
+	DisconnectAll: (self: Signal) -> (),
+
+	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
+	Fire: (self: Signal, ...any) -> (),
+
 	Destroy: (self: Signal) -> (),
 }, Signal))
 
