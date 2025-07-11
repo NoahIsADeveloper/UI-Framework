@@ -75,6 +75,7 @@ export type Signal = typeof(setmetatable({} :: {
 
 	Connect: (self: Signal, callback: Callback) -> (Connection),
 	Once: (self: Signal, callback: Callback) -> (Connection),
+	Disconnect: (self: Signal, callback: Callback) -> (),
 	DisconnectAll: (self: Signal) -> (),
 	Wait: (self: Signal, timeout: number) -> (...any),
 	Fire: (self: Signal, ...any) -> (),
@@ -96,6 +97,21 @@ function Signal:DisconnectAll(): ()
 
 	self._head = nil
 	self._tail = nil
+end
+
+function Signal:Disconnect(callback: Callback): ()
+	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {typeof(callback)}`) end
+	local connection = self._head
+
+	while connection do
+		local next = connection._next
+
+		if connection._callback == callback then
+			connection:Disconnect()
+		end
+
+		connection = next
+	end
 end
 
 function Signal:GetConnections(): ({Connection})
@@ -191,7 +207,6 @@ function Signal.from(signal: RBXScriptSignal): (Signal, RBXScriptConnection)
 
 	return object, connection
 end
-
 
 function Signal.new(): (Signal)
 	local object = setmetatable({
