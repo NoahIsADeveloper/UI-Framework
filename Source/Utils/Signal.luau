@@ -75,11 +75,12 @@ export type Signal = typeof(setmetatable({} :: {
 	Connect: (self: Signal, callback: Callback) -> (Connection),
 	Once: (self: Signal, callback: Callback) -> (Connection),
 	DisconnectAll: (self: Signal) -> (),
-	Wait: (self: Signal) -> (...any),
+	Wait: (self: Signal, timeout: number) -> (...any),
 	FireAsync: (self: Signal, ...any) -> (),
 	FireSync: (self: Signal, ...any) -> (),
 	Fire: (self: Signal, ...any) -> (),
 	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
+	GetConnections: (self: Signal) -> ({Connection}),
 
 	from: (signal: RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
@@ -96,6 +97,18 @@ function Signal:DisconnectAll(): ()
 
 	self._head = nil
 	self._tail = nil
+end
+
+function Signal:GetConnections(): ({Connection})
+	local connections = {}
+	local connection = self._head
+
+	while connection do
+		table.insert(connections, connection)
+		connection = connection._next
+	end
+
+	return connections;
 end
 
 function Signal:Connect(callback: Callback): (Connection)
@@ -115,13 +128,23 @@ function Signal:Connect(callback: Callback): (Connection)
 	return connection
 end
 
-function Signal:Wait(): (...any)
+function Signal:Wait(timeout: number): (...any)
 	local thread = coroutine.running()
 
-	self:Connect(function(connection: Connection, ...: any)
+	local connection
+	connection = self:Connect(function(_, ...: any)
 		connection:Disconnect()
 		task.spawn(thread, ...)
 	end)
+
+	if timeout then
+		task.delay(timeout, function()
+			if connection:IsConnected() then
+				connection:Disconnect()
+				task.spawn(thread)
+			end
+		end)
+	end
 
 	return coroutine.yield()
 end
@@ -137,10 +160,13 @@ function Signal:FireSync(...: any): ()
 	local connection = self._head
 	while connection do
 		local callback = connection._callback
+		local next = connection._next
+
 		if connection._connected and callback then
 			callback(connection, ...)
 		end
-		connection = connection._next
+
+		connection = next
 	end
 end
 
@@ -148,10 +174,13 @@ function Signal:FireAsync(...: any): ()
 	local connection = self._head
 	while connection do
 		local callback = connection._callback
+		local next = connection._next
+
 		if connection._connected and callback then
 			task.spawn(callback, connection, ...)
 		end
-		connection = connection._next
+
+		connection = next
 	end
 end
 
