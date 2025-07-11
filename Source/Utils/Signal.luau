@@ -70,8 +70,8 @@ export type Signal = typeof(setmetatable({} :: {
 	_head: Connection?,
 	_tail: Connection?,
 
-	GetConnections: (self: Signal) -> ({Connection}),
 	HasConnections: (self: Signal) -> (boolean, number),
+	GetConnections: (self: Signal) -> ({Connection}),
 	GetConnectionCount: (self: Signal) -> (number),
 
 	Connect: (self: Signal, callback: Callback) -> (Connection),
