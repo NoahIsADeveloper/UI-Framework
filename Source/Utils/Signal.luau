@@ -81,6 +81,7 @@ export type Signal = typeof(setmetatable({} :: {
 	Fire: (self: Signal, ...any) -> (),
 	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 	GetConnections: (self: Signal) -> ({Connection}),
+	Destroy: (self: Signal) -> (),
 
 	from: (signal: RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
@@ -207,6 +208,12 @@ function Signal.from(signal: RBXScriptSignal): (Signal, RBXScriptConnection)
 	end) :: RBXScriptConnection
 
 	return object, connection
+end
+
+function Signal:Destroy()
+	self:DisconnectAll()
+	table.clear(self)
+	setmetatable(self, nil)
 end
 
 function Signal.new(): (Signal)
