@@ -141,6 +141,21 @@ function Signal:FireAsync(...: any): ()
 	end
 end
 
+function Signal.wrap(signal: RBXScriptSignal): (Signal)
+	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of .wrap(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
+
+	local object = setmetatable({
+		_head = nil,
+		_tail = nil,
+	}, Signal) :: any
+
+	signal:Connect(function(...)
+		object:Fire(...)
+	end)
+
+	return object
+end
+
 function Signal.new(): (Signal)
 	local object = setmetatable({
 		_head = nil,
