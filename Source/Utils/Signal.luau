@@ -7,7 +7,7 @@
 -- // Constants
 local CONNECTION_POOL_MAX_SIZE = 64
 
--- // Connections
+-- // Connection
 export type Callback = (self: Connection, ...any) -> ()
 
 local ConnectionPool = table.create(CONNECTION_POOL_MAX_SIZE) :: {Connection}
@@ -63,7 +63,7 @@ function Connection.new(callback: Callback): (Connection)
 	return object
 end
 
--- // Signals
+-- // Signal
 local Signal = {} :: Signal
 Signal.__index = Signal
 export type Signal = typeof(setmetatable({} :: {
