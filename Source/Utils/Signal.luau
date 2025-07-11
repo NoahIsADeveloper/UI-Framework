@@ -49,8 +49,6 @@ function Connection:Disconnect(): ()
 end
 
 local function CreateConnection(callback: Callback): (Connection)
-	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {typeof(callback)}`) end
-
 	local object = (table.remove(ConnectionPool) or setmetatable({
 		_next = nil,
 		_last = nil,
@@ -80,6 +78,7 @@ export type Signal = typeof(setmetatable({} :: {
 	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 	GetConnections: (self: Signal) -> ({Connection}),
 	HasConnections: (self: Signal) -> (boolean, number),
+	GetConnectionCount: (self: Signal) -> (number),
 	Destroy: (self: Signal) -> (),
 }, Signal))
 
@@ -97,17 +96,9 @@ function Signal:HasConnections(): (boolean, number)
 	return true, connections
 end
 
-function Signal:DisconnectAll(): ()
-	local connection = self._head
-
-	while connection do
-		local next = connection._next
-		connection:Disconnect()
-		connection = next
-	end
-
-	self._head = nil
-	self._tail = nil
+function Signal:GetConnectionCount(): (number)
+	local _, count = self:HasConnections()
+	return count
 end
 
 function Signal:GetConnections(): ({Connection})
@@ -120,6 +111,19 @@ function Signal:GetConnections(): ({Connection})
 	end
 
 	return connections;
+end
+
+function Signal:DisconnectAll(): ()
+	local connection = self._head
+
+	while connection do
+		local next = connection._next
+		connection:Disconnect()
+		connection = next
+	end
+
+	self._head = nil
+	self._tail = nil
 end
 
 function Signal:Connect(callback: Callback): (Connection)
@@ -196,7 +200,13 @@ function Signal:Fire(...: any): ()
 			end
 		end
 
-		connection = next
+		if next and next:IsConnected() then
+			connection = connection._next
+		elseif connection._next then
+			connection = next
+		else
+			break
+		end
 	end
 end
 
@@ -210,8 +220,8 @@ end
 
 function Signal:Destroy()
 	self:DisconnectAll()
-	table.clear(self :: any)
 	setmetatable(self :: any, nil)
+	table.clear(self :: any)
 end
 
 local function CreateSignal(): (Signal)
