@@ -38,7 +38,7 @@ function Connection:Disconnect(): ()
 end
 
 function Connection.new(callback: Callback): (Connection)
-	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {type(callback)}`) end
+	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {typeof(callback)}`) end
 
 	local object = (table.remove(ConnectionPool) or setmetatable({
 		_next = nil,
@@ -66,8 +66,9 @@ export type Signal = typeof(setmetatable({} :: {
 	FireAsync: (self: Signal, ...any) -> (),
 	FireSync: (self: Signal, ...any) -> (),
 	Fire: (self: Signal, ...any) -> (),
+	Wrap: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 
-	wrap: (RBXScriptSignal) -> (Signal),
+	from: (signal: RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
 }, Signal))
 
@@ -85,7 +86,7 @@ function Signal:DisconnectAll(): ()
 end
 
 function Signal:Connect(callback: Callback): (Connection)
-	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {type(callback)}`) end
+	if type(callback) ~= "function" then error(`argument 1 of :Connect(callback: Callback) expected function got {typeof(callback)}`) end
 
 	local connection = Connection.new(callback)
 	local tail = self._tail
@@ -141,20 +142,29 @@ function Signal:FireAsync(...: any): ()
 	end
 end
 
-function Signal.wrap(signal: RBXScriptSignal): (Signal)
-	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of .wrap(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
+function Signal:Wrap(signal: RBXScriptSignal): (RBXScriptConnection)
+	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of :Wrap(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
+
+	return signal:Connect(function(...)
+		self:Fire(...)
+	end)
+end
+
+function Signal.from(signal: RBXScriptSignal): (Signal, RBXScriptConnection)
+	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of .from(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
 
 	local object = setmetatable({
 		_head = nil,
 		_tail = nil,
 	}, Signal) :: any
 
-	signal:Connect(function(...)
+	local connection = signal:Connect(function(...)
 		object:Fire(...)
-	end)
+	end) :: RBXScriptConnection
 
-	return object
+	return object, connection
 end
+
 
 function Signal.new(): (Signal)
 	local object = setmetatable({
