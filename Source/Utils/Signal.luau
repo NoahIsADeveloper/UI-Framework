@@ -2,6 +2,7 @@
 --!strict
 
 -- Written by @NoahIsADeveloper
+-- Disconnecting listeners in callbacks will still run the listener if said listener is the next one in the chain. Unsure as to a fix. Why would you be doing this anyways?
 -- Listeners are called in the order they are connected in (FIFO)
 -- Arguments are not cloned
 
@@ -110,7 +111,7 @@ function Signal:GetConnections(): ({Connection})
 		connection = connection._next
 	end
 
-	return connections;
+	return connections
 end
 
 function Signal:DisconnectAll(): ()
@@ -200,13 +201,7 @@ function Signal:Fire(...: any): ()
 			end
 		end
 
-		if next and next:IsConnected() then
-			connection = connection._next
-		elseif connection._next then
-			connection = next
-		else
-			break
-		end
+		connection = next
 	end
 end
 
