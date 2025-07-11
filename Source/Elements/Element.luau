@@ -44,14 +44,14 @@ local function isElement(value: any): (boolean)
 	return type(value) == "table" and getmetatable(value) == Element
 end
 
-function Element:DefineSignals()
+function Element:DefineSignals(): ()
 	self.ParentChanged = Signal.new()
 	self.SizeChanged = Signal.new()
 	self.PositionChanged = Signal.new()
 	self.ChildAdded = Signal.new()
 end
 
-function Element:DefineProperties()
+function Element:DefineProperties(): ()
 	self.size = FlexXY.new(0, 100, 0, 100)
 	self.position = FlexXY.new(0, 0, 0, 0)
 	self.anchorPoint = VectorXY.new(0.5, 0.5)
