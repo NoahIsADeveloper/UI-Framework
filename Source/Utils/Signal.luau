@@ -66,7 +66,7 @@ export type Signal = typeof(setmetatable({} :: {
 	FireAsync: (self: Signal, ...any) -> (),
 	FireSync: (self: Signal, ...any) -> (),
 	Fire: (self: Signal, ...any) -> (),
-	Wrap: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
+	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 
 	from: (signal: RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
@@ -142,8 +142,8 @@ function Signal:FireAsync(...: any): ()
 	end
 end
 
-function Signal:Wrap(signal: RBXScriptSignal): (RBXScriptConnection)
-	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of :Wrap(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
+function Signal:Listen(signal: RBXScriptSignal): (RBXScriptConnection)
+	if typeof(signal) ~= "RBXScriptSignal" then error(`argument 1 of :Listen(signal: RBXScriptSignal) expected RBXScriptSignal got {typeof(signal)}`) end
 
 	return signal:Connect(function(...)
 		self:Fire(...)
