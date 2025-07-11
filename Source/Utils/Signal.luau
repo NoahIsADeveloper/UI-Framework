@@ -81,11 +81,26 @@ export type Signal = typeof(setmetatable({} :: {
 	Fire: (self: Signal, ...any) -> (),
 	Listen: (self: Signal, signal: RBXScriptSignal) -> (RBXScriptConnection),
 	GetConnections: (self: Signal) -> ({Connection}),
+	HasConnections: (self: Signal) -> (boolean, number),
 	Destroy: (self: Signal) -> (),
 
 	from: (signal: RBXScriptSignal) -> (Signal),
 	new: () -> (Signal),
 }, Signal))
+
+function Signal:HasConnections(): (boolean, number)
+	if self._head == nil then return false, 0 end
+
+	local connections = 0
+	local connection = self._head
+
+	while connection do
+		connections += 1
+		connection = connection._next :: any
+	end
+
+	return true, connections
+end
 
 function Signal:DisconnectAll(): ()
 	local connection = self._head
