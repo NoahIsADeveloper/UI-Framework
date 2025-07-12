@@ -116,6 +116,8 @@ function Element:Render()
 	local fr = Instance.new("Frame")
 
 	sgui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
+	sgui.IgnoreGuiInset = true
+	sgui.ResetOnSpawn = false
 	fr.Parent = sgui
 	fr.Size = self.actualSize:ToUDim2()
 	fr.Position = self.actualPosition:ToUDim2()
