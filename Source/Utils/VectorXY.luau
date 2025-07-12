@@ -24,6 +24,7 @@ export type VectorXY = typeof(setmetatable({} :: {
 
 	ToTable: (self: VectorXY) -> ({x: number, y: number}),
 	ToVector2: (self: VectorXY) -> (Vector2),
+	ToUDim2: (self: VectorXY) -> (UDim2),
 	Dot: (self: VectorXY, other: VectorXY) -> (number),
 	Lerp: (self: VectorXY, other: VectorXY, alpha: number) -> (VectorXY),
 	Clone: (self: VectorXY) -> (VectorXY),
@@ -126,6 +127,10 @@ end
 
 function VectorXY:ToVector2(): (Vector2)
 	return Vector2.new(self.x, self.y)
+end
+
+function VectorXY:ToUDim2(): (UDim2)
+	return UDim2.new(0, self.x, 0, self.y)
 end
 
 function VectorXY:ToTable(): ({x: number, y: number})

@@ -37,6 +37,7 @@ export type Element = typeof(setmetatable({} :: {
 	RecalculateLayout: (self: Element) -> (),
 	Reparent: (self: Element, parent: Element?) -> (boolean),
 	Resize: (self: Element, size: FlexXY.FlexXY) -> (boolean),
+	Render: (self: Element) -> (),
 
 	new: (parent: Element) -> (Element),
 }, Element))
@@ -111,8 +112,8 @@ function Element:Render()
 
 	sgui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 	fr.Parent = sgui
-	fr.Size = self.actualSize:ToVector2()
-	fr.Position = self.actualPosition:ToVector2()
+	fr.Size = self.actualSize:ToUDim2()
+	fr.Position = self.actualPosition:ToUDim2()
 end
 
 function Element.new(parent: Element): (Element)
