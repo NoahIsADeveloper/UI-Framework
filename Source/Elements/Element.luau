@@ -126,7 +126,6 @@ function Element.new(parent: Element): (Element)
 	object:DefineProperties()
 
 	object:Reparent(parent)
-	object:Render()
 
 	return object
 end
