@@ -64,11 +64,13 @@ end
 function Element:CalculateLayout(): ()
 	if self.parent then
 		self.actualSize = self.size:ToOffset(self.parent.actualSize)
-		self.actualPosition = self.parent.actualPosition + self.position:ToOffset(self.parent.actualSize) - (self.anchorPoint * self.actualSize)
+		self.actualPosition = self.parent.actualPosition + self.position:ToOffset(self.parent.actualSize)
 	else
 		self.actualSize = self.size:ToOffset()
 		self.actualPosition = self.position:ToOffset()
 	end
+
+	self.actualPosition -= self.anchorPoint * self.actualSize
 
 	for _, child in self.children do
 		child:CalculateLayout()
