@@ -111,16 +111,8 @@ function Element:Reparent(parent: Element?): (boolean)
 	return true
 end
 
-function Element:Render()
-	local sgui = Instance.new("ScreenGui")
-	local fr = Instance.new("Frame")
+function Element:Render(): ()
 
-	sgui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
-	sgui.IgnoreGuiInset = true
-	sgui.ResetOnSpawn = false
-	fr.Parent = sgui
-	fr.Size = self.actualSize:ToUDim2()
-	fr.Position = self.actualPosition:ToUDim2()
 end
 
 function Element.new(parent: Element): (Element)
