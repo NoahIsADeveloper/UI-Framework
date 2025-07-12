@@ -23,6 +23,7 @@ export type VectorXY = typeof(setmetatable({} :: {
 	magnitude: number,
 
 	ToTable: (self: VectorXY) -> ({x: number, y: number}),
+	ToVector2: (self: VectorXY) -> (Vector2),
 	Dot: (self: VectorXY, other: VectorXY) -> (number),
 	Lerp: (self: VectorXY, other: VectorXY, alpha: number) -> (VectorXY),
 	Clone: (self: VectorXY) -> (VectorXY),
@@ -121,6 +122,10 @@ end
 
 function VectorXY:InBoundingBox(position: VectorXY, size: VectorXY): (boolean)
 	return false
+end
+
+function VectorXY:ToVector2(): (Vector2)
+	return Vector2.new(self.x, self.y)
 end
 
 function VectorXY:ToTable(): ({x: number, y: number})
