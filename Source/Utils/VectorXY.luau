@@ -105,14 +105,14 @@ VectorXY.__index = function(self: VectorXY, key: any): (any)
 		end
 	end
 
-	return self[key:lower()] or VectorXY[key]
+	return rawget(self :: any, key:lower()) or VectorXY[key]
 end
 
 VectorXY.__newindex = function(self: VectorXY, key: any, value: any): ()
 	assert(type(key) == "string" and (key:lower() == "x" or key:lower() == "y"), `cannot set property '{key}' of VectorXY`)
 	assert(type(value) == "number", `cannot set property '{key}' of VectorXY to {type(value)}`)
 
-	self[key:lower()] = value
+	rawset(self :: any, key:lower(), value)
 end
 
 VectorXY.__tostring = function(self: VectorXY): (string)
