@@ -34,7 +34,7 @@ export type Element = typeof(setmetatable({} :: {
 	DefineProperties: (self: Element) -> (),
 	DefineSignals: (self: Element) -> (),
 
-	RecalculateLayout: (self: Element) -> (),
+	CalculateLayout: (self: Element) -> (),
 	Reparent: (self: Element, parent: Element?) -> (boolean),
 	Resize: (self: Element, size: FlexXY.FlexXY) -> (boolean),
 	Render: (self: Element) -> (),
@@ -55,20 +55,23 @@ end
 
 function Element:DefineProperties(): ()
 	self.size = FlexXY.new(0, 100, 0, 100)
-	self.actualSize = self.size:ToOffset()
 	self.position = FlexXY.new(0, 0, 0, 0)
-	self.actualPosition = self.position:ToOffset()
 	self.anchorPoint = VectorXY.new(0.5, 0.5)
+
+	self:CalculateLayout()
 end
 
-function Element:RecalculateLayout(): ()
+function Element:CalculateLayout(): ()
 	if self.parent then
 		self.actualSize = self.size:ToOffset(self.parent.actualSize)
-		self.actualPosition = self.position:ToOffset(self.parent.actualPosition)
+		self.actualPosition = self.parent.actualPosition + self.position:ToOffset(self.parent.actualSize) - (self.anchorPoint * self.actualSize)
+	else
+		self.actualSize = self.size:ToOffset()
+		self.actualPosition = self.position:ToOffset()
 	end
 
 	for _, child in self.children do
-		child:RecalculateLayout()
+		child:CalculateLayout()
 	end
 end
 
@@ -76,7 +79,7 @@ function Element:Resize(size: FlexXY.FlexXY): (boolean)
 	local oldSize = self.size
 
 	self.size = size
-	self:RecalculateLayout()
+	self:CalculateLayout()
 	self.SizeChanged:Fire(size, oldSize)
 
 	return true
@@ -100,7 +103,7 @@ function Element:Reparent(parent: Element?): (boolean)
 	end
 
 	self.parent = parent
-	self:RecalculateLayout()
+	self:CalculateLayout()
 	self.ParentChanged:Fire(parent, oldParent)
 
 	return true
