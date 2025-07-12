@@ -161,16 +161,20 @@ function VectorXY:Lerp(other: VectorXY, alpha: number): (VectorXY)
 	)
 end
 
-function VectorXY:Rotate(radians: number): (VectorXY)
+function VectorXY:Rotate(radians: number, pivot: VectorXY?): VectorXY
 	assert(type(radians) == "number", `argument 1 of VectorXY:Rotate() expected number got {type(radians)}`)
+	assert(isVector(pivot) or pivot == nil, `argument 2 of VectorXY:Rotate() expected VectorXY? got {type(pivot)}`)
 
+	local translated = if pivot then self - pivot else self
 	local cos = math.cos(radians)
 	local sin = math.sin(radians)
 
-	return VectorXY.new(
-		self.x * cos - self.y * sin,
-		self.x * sin + self.y * cos
+	local rotated = VectorXY.new(
+		translated.x * cos - translated.y * sin,
+		translated.x * sin + translated.y * cos
 	)
+
+	return if pivot then rotated + pivot else rotated
 end
 
 function VectorXY.fromVector2(vector2: Vector2): (VectorXY)
