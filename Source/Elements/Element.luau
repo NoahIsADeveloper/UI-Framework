@@ -111,8 +111,8 @@ function Element:Render()
 
 	sgui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
 	fr.Parent = sgui
-	fr.Size = self.actualSize
-	fr.Position = self.actualPosition
+	fr.Size = self.actualSize:ToUDim2()
+	fr.Position = self.actualPosition:ToUDim2()
 end
 
 function Element.new(parent: Element): (Element)
