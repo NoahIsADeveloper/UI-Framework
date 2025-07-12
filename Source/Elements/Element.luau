@@ -59,6 +59,8 @@ end
 
 function Element:Resize(size: FlexXY.FlexXY): (boolean)
 	--note! would also need to resize children
+	--note! also change the absoluteSize
+
 	local oldSize = self.size
 
 	self.size = size
