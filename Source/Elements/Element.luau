@@ -57,7 +57,7 @@ function Element:DefineProperties(): ()
 	self.size = FlexXY.new(0, 100, 0, 100)
 	self.actualSize = self.size:ToOffset()
 	self.position = FlexXY.new(0, 0, 0, 0)
-	self.actualSize = self.position:ToOffset()
+	self.actualPosition = self.position:ToOffset()
 	self.anchorPoint = VectorXY.new(0.5, 0.5)
 end
 
