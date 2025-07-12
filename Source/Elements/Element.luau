@@ -14,10 +14,10 @@ export type Element = typeof(setmetatable({} :: {
 	-- // Properties
 	anchorPoint: VectorXY.VectorXY,
 
-	actualSize: FlexXY.FlexXY,
+	actualSize: VectorXY.VectorXY,
 	size: FlexXY.FlexXY,
 
-	actualPosition: FlexXY.FlexXY,
+	actualPosition: VectorXY.VectorXY,
 	position: FlexXY.FlexXY,
 
 	parent: Element?,
@@ -34,6 +34,7 @@ export type Element = typeof(setmetatable({} :: {
 	DefineProperties: (self: Element) -> (),
 	DefineSignals: (self: Element) -> (),
 
+	RecalculateLayout: (self: Element) -> (),
 	Reparent: (self: Element, parent: Element?) -> (boolean),
 	Resize: (self: Element, size: FlexXY.FlexXY) -> (boolean),
 
@@ -53,17 +54,28 @@ end
 
 function Element:DefineProperties(): ()
 	self.size = FlexXY.new(0, 100, 0, 100)
+	self.actualSize = self.size:ToOffset()
 	self.position = FlexXY.new(0, 0, 0, 0)
+	self.actualSize = self.position:ToOffset()
 	self.anchorPoint = VectorXY.new(0.5, 0.5)
 end
 
-function Element:Resize(size: FlexXY.FlexXY): (boolean)
-	--note! would also need to resize children
-	--note! also change the actualSize
+function Element:RecalculateLayout(): ()
+	if self.parent then
+		self.actualSize = self.size:ToOffset(self.parent.actualSize)
+		self.actualPosition = self.position:ToOffset(self.parent.actualPosition)
+	end
 
+	for _, child in self.children do
+		child:RecalculateLayout()
+	end
+end
+
+function Element:Resize(size: FlexXY.FlexXY): (boolean)
 	local oldSize = self.size
 
 	self.size = size
+	self:RecalculateLayout()
 	self.SizeChanged:Fire(size, oldSize)
 
 	return true
@@ -73,8 +85,6 @@ function Element:Reparent(parent: Element?): (boolean)
 	local oldParent = self.parent
 	if oldParent == parent then return false end
 	if parent ~= nil and not isElement(parent) then return false end
-	--note! would also need to resize children
-	--note! also change the actualSize
 
 	if oldParent then
 		local index = table.find(oldParent.children, self)
@@ -83,16 +93,26 @@ function Element:Reparent(parent: Element?): (boolean)
 		end
 	end
 
-	self.parent = parent
-
 	if parent then
 		table.insert(parent.children, self)
 		parent.ChildAdded:Fire(self)
 	end
 
+	self.parent = parent
+	self:RecalculateLayout()
 	self.ParentChanged:Fire(parent, oldParent)
 
 	return true
+end
+
+function Element:Render()
+	local sgui = Instance.new("ScreenGui")
+	local fr = Instance.new("Frame")
+
+	sgui.Parent = game:GetService("Players").LocalPlayer.PlayerGui
+	fr.Parent = sgui
+	fr.Size = self.actualSize
+	fr.Position = self.actualPosition
 end
 
 function Element.new(parent: Element): (Element)
@@ -105,6 +125,7 @@ function Element.new(parent: Element): (Element)
 	object:DefineProperties()
 
 	object:Reparent(parent)
+	object:Render()
 
 	return object
 end
