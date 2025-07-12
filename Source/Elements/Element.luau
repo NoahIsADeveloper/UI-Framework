@@ -14,10 +14,10 @@ export type Element = typeof(setmetatable({} :: {
 	-- // Properties
 	anchorPoint: VectorXY.VectorXY,
 
-	actualSize: VectorXY.VectorXY,
+	actualSize: FlexXY.FlexXY,
 	size: FlexXY.FlexXY,
 
-	actualPosition: VectorXY.VectorXY,
+	actualPosition: FlexXY.FlexXY,
 	position: FlexXY.FlexXY,
 
 	parent: Element?,
@@ -59,7 +59,7 @@ end
 
 function Element:Resize(size: FlexXY.FlexXY): (boolean)
 	--note! would also need to resize children
-	--note! also change the absoluteSize
+	--note! also change the actualSize
 
 	local oldSize = self.size
 
@@ -74,6 +74,7 @@ function Element:Reparent(parent: Element?): (boolean)
 	if oldParent == parent then return false end
 	if parent ~= nil and not isElement(parent) then return false end
 	--note! would also need to resize children
+	--note! also change the actualSize
 
 	if oldParent then
 		local index = table.find(oldParent.children, self)
