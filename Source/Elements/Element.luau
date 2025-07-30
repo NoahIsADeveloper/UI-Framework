@@ -39,7 +39,7 @@ export type Element = typeof(setmetatable({} :: {
 	Resize: (self: Element, size: FlexXY.FlexXY) -> (boolean),
 	Render: (self: Element) -> (Instance),
 
-	new: (parent: Element) -> (Element),
+	new: (self: Element, parent: Element?) -> (Element),
 }, Element))
 
 local function isElement(value: any): (boolean)
@@ -120,15 +120,14 @@ function Element:Render(): (Instance)
 	return frame
 end
 
-function Element.new(parent: Element): (Element)
+function Element:new(parent: Element?): (Element)
 	local object = setmetatable({
 		parent = nil,
 		children = {},
-	}, Element) :: any
+	}, self) :: any
 
 	object:DefineSignals()
 	object:DefineProperties()
-
 	object:Reparent(parent)
 
 	return object

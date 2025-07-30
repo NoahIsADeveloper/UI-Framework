@@ -4,6 +4,7 @@
 local Element = require("./Element")
 
 local Container = table.clone(Element) :: Container
+Container.__index = Container
 export type Container = {
 	color: Color3,
 } & Element.Element
@@ -17,6 +18,7 @@ end
 function Container:Render(): (Instance)
 	local frame = Element.Render(self) :: Frame
 	frame.BackgroundColor3 = (self :: Container).color
+
 	return frame
 end
 
