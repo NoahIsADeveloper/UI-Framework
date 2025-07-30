@@ -14,8 +14,10 @@ function Container:DefineProperties(): ()
 	Element.DefineProperties(self)
 end
 
-function Container:Render(): ()
-	
+function Container:Render(): (Instance)
+	local frame = Element.Render(self) :: Frame
+	frame.BackgroundColor3 = (self :: Container).color
+	return frame
 end
 
 return Container

@@ -37,7 +37,7 @@ export type Element = typeof(setmetatable({} :: {
 	CalculateLayout: (self: Element) -> (),
 	Reparent: (self: Element, parent: Element?) -> (boolean),
 	Resize: (self: Element, size: FlexXY.FlexXY) -> (boolean),
-	Render: (self: Element) -> (),
+	Render: (self: Element) -> (Instance),
 
 	new: (parent: Element) -> (Element),
 }, Element))
@@ -111,12 +111,13 @@ function Element:Reparent(parent: Element?): (boolean)
 	return true
 end
 
-function Element:Render(): ()
+function Element:Render(): (Instance)
 	local frame = Instance.new("Frame")
 	frame.Size = self.actualSize:ToUDim2()
 	frame.Position = self.actualPosition:ToUDim2()
 
 	frame.Parent = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
+	return frame
 end
 
 function Element.new(parent: Element): (Element)
