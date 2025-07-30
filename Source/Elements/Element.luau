@@ -112,7 +112,11 @@ function Element:Reparent(parent: Element?): (boolean)
 end
 
 function Element:Render(): ()
-	--note! needs render code
+	local frame = Instance.new("Frame")
+	frame.Size = self.actualSize:ToUDim2()
+	frame.Position = self.actualPosition:ToUDim2()
+
+	frame.Parent = Instance.new("ScreenGui", game.Players.LocalPlayer.PlayerGui)
 end
 
 function Element.new(parent: Element): (Element)

@@ -122,7 +122,14 @@ VectorXY.__tostring = function(self: VectorXY): (string)
 end
 
 function VectorXY:InBoundingBox(position: VectorXY, size: VectorXY): (boolean)
-	return false
+	assert(isVector(position), `argument 1 of VectorXY:InBoundingBox() expected VectorXY got {type(position)}`)
+	assert(isVector(size), `argument 2 of VectorXY:InBoundingBox() expected VectorXY got {type(size)}`)
+
+	return
+		self.x >= position.x and
+		self.x <= position.y + size.y and
+		self.y >= position.y and
+		self.y <= position.x + size.x
 end
 
 function VectorXY:ToVector2(): (Vector2)
